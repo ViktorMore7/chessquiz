@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Master's Challenge: Test Your Chess IQ!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .chess-piece {
+            font-size: 24px;
+            color: #333;
+            display: inline-block;
+            width: 40px;
+            text-align: center;
+            line-height: 40px;
+        }
+        
+        .chess-piece.white {
+            color: #fff;
+            text-shadow: 0 0 2px #000;
+        }
+        
+        .chess-piece.black {
+            color: #333;
+        }
+        
+        .board-cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        
+        .board-row {
+            display: flex;
+        }
+        
+        .option-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .question-number {
+            background: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .chess-pattern {
+            background-image: radial-gradient(#4ade80 2px, transparent 2px), radial-gradient(#22c55e 2px, transparent 2px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <div class="inline-block p-4 rounded-full bg-white/20 backdrop-blur-sm mb-4">
+                <i data-lucide="chess" class="w-16 h-16 text-yellow-400"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2 drop-shadow-lg">Chess Master's Challenge</h1>
+            <p class="text-xl text-blue-100">Test Your Chess IQ!</p>
+            <p class="text-lg text-white/80 mt-2">A Fun Quiz for Future Grandmasters (Ages 10-14)</p>
+        </header>
+        
+        <!-- Progress Bar -->
+        <div class="bg-white/20 backdrop-blur-md rounded-xl p-6 mb-8 shadow-xl">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-white font-semibold">Quiz Progress</span>
+                <span id="question-counter" class="text-white font-semibold">0/35</span>
+            </div>
+            <div class="w-full bg-white/30 rounded-full h-4 overflow-hidden">
+                <div id="progress-bar" class="progress-bar bg-gradient-to-r from-green-400 to-blue-500 h-full rounded-full"></div>
+            </div>
+        </div>
+        
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 mb-8">
+            <!-- Welcome Screen -->
+            <div id="welcome-screen" class="text-center">
+                <div class="mb-6 chess-pattern rounded-xl h-48 flex items-center justify-center">
+                    <div class="grid grid-cols-4 gap-1">
+                        <div class="chess-piece white"><i class="fa-solid fa-chess-rook"></i></div>
+                        <div class="chess-piece white"><i class="fa-solid fa-chess-knight"></i></div>
+                        <div class="chess-piece white"><i class="fa-solid fa-chess-bishop"></i></div>
+                        <div class="chess-piece white"><i class="fa-solid fa-chess-queen"></i></div>
+                        <div class="chess-piece white"><i class="fa-solid fa-chess-king"></i></div>
+                        <div class="chess-piece white"><i class="fa-solid fa-chess-bishop"></i></div>
+                        <div class="chess-piece white"><i class="fa-solid fa-chess-knight"></i></div>
+                        <div class="chess-piece white"><i class="fa-solid fa-chess-rook"></i></div>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">Welcome, Young Chess Enthusiast!</h2>
+                <p class="mb-6 text-gray-600">You're about to take on <span class="font-bold text-blue-600">35 questions</span> across three exciting sections:</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <h3 class="font-bold text-blue-600 mb-2"><i class="fa-solid fa-book-open mr-2"></i>Section A</h3>
+                        <p class="text-sm">What's the Word? (Definitions)</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                        <h3 class="font-bold text-green-600 mb-2"><i class="fa-solid fa-gamepad mr-2"></i>Section B</h3>
+                        <p class="text-sm">Chess Situations (Scenarios)</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                        <h3 class="font-bold text-purple-600 mb-2"><i class="fa-solid fa-check-double mr-2"></i>Section C</h3>
+                        <p class="text-sm">True or False? (Identify Correct Statements)</p>
+                    </div>
+                </div>
+                <button id="start-btn" class="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-full text-lg shadow-lg transform transition hover:scale-105 duration-300">
+                    Start the Challenge!
+                </button>
+            </div>
+            
+            <!-- Question Screen -->
+            <div id="question-screen" class="hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <span id="section-badge" class="px-4 py-1 rounded-full text-sm font-bold bg-blue-100 text-blue-700"></span>
+                    <div class="flex items-center">
+                        <div class="question-number mr-3"></div>
+                        <span id="question-number" class="text-gray-500">Question</span>
+                    </div>
+                </div>
+                
+                <h2 id="question-text" class="text-xl md:text-2xl font-bold mb-6 text-gray-800"></h2>
+                
+                <div id="diagram-container" class="mb-6 flex justify-center min-h-[100px]">
+                    <!-- Chess diagram will be inserted here -->
+                </div>
+                
+                <div id="options-container" class="space-y-3">
+                    <!-- Options will be inserted here -->
+                </div>
+                
+                <div id="feedback-container" class="mt-6 p-4 rounded-lg hidden">
+                    <div class="flex items-center">
+                        <i id="feedback-icon" class="w-6 h-6 mr-3"></i>
+                        <span id="feedback-text" class="font-semibold"></span>
+                    </div>
+                    <p id="explanation-text" class="mt-2 text-gray-600 text-sm"></p>
+                </div>
+                
+                <div class="flex justify-between mt-8 pt-6 border-t border-gray-100">
+                    <button id="prev-btn" class="px-6 py-3 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 disabled:opacity-50 hidden">
+                        <i class="fa-solid fa-arrow-left mr-2"></i>Previous
+                    </button>
+                    <div id="submit-container" class="flex-grow text-center">
+                        <button id="next-btn" class="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transform transition hover:scale-105 duration-300 hidden">
+                            Next Question <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                        <button id="submit-btn" class="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transform transition hover:scale-105 duration-300 hidden">
+                            Submit Answer <i class="fa-solid fa-check ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Screen -->
+            <div id="results-screen" class="hidden text-center">
+                <div class="chess-pattern rounded-xl h-48 flex items-center justify-center mb-6">
+                    <div class="text-white">
+                        <i class="fa-solid fa-trophy text-5xl mb-4"></i>
+                        <h2 class="text-3xl font-bold mb-2">Quiz Complete!</h2>
+                        <p class="text-xl">Here is your chess knowledge rating</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl p-8 mb-8 shadow-lg transform transition hover:scale-105 duration-300">
+                    <div class="text-5xl md:text-6xl font-bold text-white mb-4">
+                        <span id="score">0</span> / <span id="total-questions">35</span>
+                    </div>
+                    <div class="text-xl md:text-2xl font-semibold text-white">
+                        <span id="rating"></span>
+                    </div>
+                    <p class="text-white/80 mt-2">You've mastered the game!</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <h3 class="font-bold text-blue-600 mb-2">Section A</h3>
+                        <p class="text-2xl font-bold text-blue-800"><span id="score-section-a">0</span> / <span id="total-section-a">15</span></p>
+                        <p class="text-sm text-gray-600">Definitions Quiz</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                        <h3 class="font-bold text-green-600 mb-2">Section B</h3>
+                        <p class="text-2xl font-bold text-green-800"><span id="score-section-b">0</span> / <span id="total-section-b">15</span></p>
+                        <p class="text-sm text-gray-600">Chess Scenarios</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                        <h3 class="font-bold text-purple-600 mb-2">Section C</h3>
+                        <p class="text-2xl font-bold text-purple-800"><span id="score-section-c">0</span> / <span id="total-section-c">5</span></p>
+                        <p class="text-sm text-gray-600">True or False</p>
+                    </div>
+                </div>
+                
+                <button id="restart-btn" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-full text-lg shadow-lg transform transition hover:scale-105 duration-300">
+                    <i class="fa-solid fa-rotate-right mr-2"></i>Play Again
+                </button>
+                
+                <button id="export-btn" class="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transform transition hover:scale-105 duration-300">
+                    <i class="fa-solid fa-file-export mr-2"></i>Export to PDF
+                </button>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="text-center text-white/80 text-sm py-4">
+            <p>Created for Young Chess Enthusiasts • Learning Through Fun</p>
+            <div class="mt-2">
+                <span class="inline-block mx-2"><i class="fa-solid fa-chess-king mr-2"></i>Opening</span>
+                <span class="inline-block mx-2"><i class="fa-solid fa-chess-knight mr-2"></i>Middlegame</span>
+                <span class="inline-block mx-2"><i class="fa-solid fa-chess-rook mr-2"></i>Endgame</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Chess data from the user's prompt
+        const quizData = {
+            sectionA: [
+                {
+                    question: "The basic unit of play where you transfer a piece from one square to another.",
+                    options: ["Capture", "Move", "Check", "Threat"],
+                    correct: 1,
+                    explanation: "A move is the fundamental action in chess where you transfer a piece from one square to another.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "To remove your opponent's piece from the board by moving your piece onto its square.",
+                    options: ["Capture / Take", "Sacrifice", "Exchange", "Promote"],
+                    correct: 0,
+                    explanation: "Capture (or Take) is how you remove your opponent's pieces from the board.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "A direct attack on the opponent's king.",
+                    options: ["Checkmate", "Check", "Stalemate", "Threat"],
+                    correct: 1,
+                    explanation: "Check is a direct attack on the opponent's king that must be addressed immediately.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "The ultimate goal: when the king is in check and cannot escape.",
+                    options: ["Stalemate", "Check", "Checkmate", "Resign"],
+                    correct: 2,
+                    explanation: "Checkmate is the goal of chess – when the king is in check and cannot escape.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "A special draw where a player has no legal moves but their king is NOT in check.",
+                    options: ["Checkmate", "Stalemate", "Perpetual Check", "Resign"],
+                    correct: 1,
+                    explanation: "Stalemate is a draw that occurs when a player has no legal moves but their king is not in check.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "The only move where two pieces (king and rook) move at the same time.",
+                    options: ["En Passant", "Promotion", "Castling", "Fork"],
+                    correct: 2,
+                    explanation: "Castling is the special move where the king and rook move simultaneously for king safety.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "A special pawn capture that can only be done immediately after a pawn moves two squares forward from its starting position.",
+                    options: ["Promotion", "En Passant", "Capture", "Fork"],
+                    correct: 1,
+                    explanation: "En Passant is a special pawn capture rule that can only be executed immediately after a pawn moves two squares.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "When a pawn reaches the opposite side of the board and turns into a queen, rook, bishop, or knight.",
+                    options: ["Sacrifice", "Promotion", "Development", "Exchange"],
+                    correct: 1,
+                    explanation: "Promotion is the reward for a pawn reaching the opposite side, where it can become a more powerful piece.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "Deliberately giving up a piece or pawn to get a bigger advantage later, like a strong attack.",
+                    options: ["Exchange", "Sacrifice", "Blunder", "Gambit"],
+                    correct: 1,
+                    explanation: "Sacrifice is giving up material with the expectation of gaining a greater advantage later.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "A trade of pieces, usually of equal value.",
+                    options: ["Sacrifice", "Exchange", "Capture", "Fork"],
+                    correct: 1,
+                    explanation: "Exchange refers to trading pieces, typically of equal value, like a rook for a rook.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "A double attack where one piece, like a knight, attacks two enemy pieces at once.",
+                    options: ["Pin", "Skewer", "Fork", "Discovered Attack"],
+                    correct: 2,
+                    explanation: "A fork is a powerful tactic where one piece attacks two or more enemy pieces simultaneously.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "When a piece cannot move because it would expose a more valuable piece (like the king) behind it.",
+                    options: ["Fork", "Pin", "Skewer", "Double Check"],
+                    correct: 1,
+                    explanation: "A pin traps an opponent's piece because moving it would expose a more valuable piece behind it.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "The first phase of the game, focused on moving your pieces off the back rank and castling.",
+                    options: ["Middlegame", "Opening", "Endgame", "Variation"],
+                    correct: 1,
+                    explanation: "The Opening is the first phase where players focus on development, king safety, and controlling the center.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "The final phase of the game, where promoting a pawn is the main goal and the king becomes active.",
+                    options: ["Opening", "Middlegame", "Endgame", "Flank"],
+                    correct: 2,
+                    explanation: "The Endgame is the final phase where king activity and pawn promotion become crucial.",
+                    section: "Section A: What's the Word?"
+                },
+                {
+                    question: "A pawn with no enemy pawns blocking its path to become a queen.",
+                    options: ["Isolated Pawn", "Doubled Pawn", "Passed Pawn", "Backward Pawn"],
+                    correct: 2,
+                    explanation: "A Passed Pawn has no enemy pawns on adjacent files to block its path to promotion.",
+                    section: "Section A: What's the Word?"
+                }
+            ],
+            sectionB: [
+                {
+                    question: "White sacrifices a pawn on move 3 to quickly develop their bishops and control the center. This is called a...",
+                    options: ["Mistake", "Blunder", "Gambit", "Fork"],
+                    correct: 2,
+                    explanation: "A Gambit is a strategic pawn sacrifice in the opening to gain development or positional advantages.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "You move your bishop, and it uncovers an attack from your rook on the opponent's queen. This tactic is a...",
+                    options: ["Pin", "Discovered Attack", "Skewer", "Double Attack"],
+                    correct: 1,
+                    explanation: "A Discovered Attack occurs when moving a piece reveals an attack from another piece.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "Your rook is on a file where there are no pawns at all. This is called an...",
+                    options: ["Half-open File", "Open File", "Diagonal", "Outpost"],
+                    correct: 1,
+                    explanation: "An Open File is a file with no pawns on it, allowing rooks and queens to control it.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "You have a knight securely placed on a square in your opponent's territory that their pawns can't attack. This knight is on an...",
+                    options: ["Open File", "Weakness", "Outpost", "Flank"],
+                    correct: 2,
+                    explanation: "An Outpost is a strong square, often in enemy territory, where a piece (especially a knight) can't be attacked by enemy pawns.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "You have more rooks and bishops than your opponent. You have a...",
+                    options: ["Positional Advantage", "Material Advantage", "Initiative", "Tempo"],
+                    correct: 1,
+                    explanation: "Material Advantage means you have more pieces or pieces of greater total value.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "You control more squares with your pawns, making your opponent's pieces feel cramped. You have a space advantage, which is a type of...",
+                    options: ["Material Advantage", "Positional Advantage", "Threat", "Compensation"],
+                    correct: 1,
+                    explanation: "Positional Advantage refers to better setup, control, and piece activity, even if material is equal.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "You make a move that attacks your opponent's queen. This move creates a...",
+                    options: ["Threat", "Check", "Weakness", "Tempo"],
+                    correct: 0,
+                    explanation: "A Threat is a move that forces your opponent to respond to prevent an immediate loss or disadvantage.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "You develop your knight to a good square and it also attacks an opponent's bishop, forcing them to waste a move moving it. You have gained a...",
+                    options: ["Pawn", "Tempo", "File", "Weakness"],
+                    correct: 1,
+                    explanation: "Tempo is like getting a 'free move' by forcing your opponent to react to your threat.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "You have a pawn on d4 with no friendly pawns on the c-file or e-file. This pawn is...",
+                    options: ["Passed", "Isolated", "Doubled", "Backward"],
+                    correct: 1,
+                    explanation: "An Isolated Pawn has no friendly pawns on adjacent files, making it harder to defend.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "A player is losing badly, so they stop the game and declare their opponent the winner. They have chosen to...",
+                    options: ["Stalemate", "Draw", "Resign", "Checkmate"],
+                    correct: 2,
+                    explanation: "Resign is the graceful act of acknowledging defeat when the position is hopeless.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "You attack your opponent's queen with your bishop. Their queen moves, and then your bishop captures their rook behind it. This is a...",
+                    options: ["Pin", "Skewer", "Fork", "Discovered Check"],
+                    correct: 1,
+                    explanation: "A Skewer is like a reverse pin where the more valuable piece is attacked first and moves away, exposing the less valuable piece behind it.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "You make a move that is okay, but not the absolute best. Chess computers might mark it with '?!' and call it an...",
+                    options: ["Inaccuracy", "Mistake", "Blunder", "Brilliant Move"],
+                    correct: 0,
+                    explanation: "An Inaccuracy is a move that's not optimal but doesn't significantly harm your position.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "The player who is making all the threats and forcing their opponent to respond is said to have the...",
+                    options: ["Material", "Initiative", "Centre", "Development"],
+                    correct: 1,
+                    explanation: "Initiative means you're controlling the pace of the game by making threats that force your opponent to react.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "Imagine a position where White can keep checking the Black king forever, and Black can never escape or block all the checks. This would result in a draw by...",
+                    options: ["Stalemate", "Perpetual Check", "Resignation", "Fifty-Move Rule"],
+                    correct: 1,
+                    explanation: "Perpetual Check is a draw that occurs when one player can check the opponent's king indefinitely.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                },
+                {
+                    question: "Look at this imaginary board: The Black king is on e8. A White bishop is on b5, and a White knight is on d7. The knight moves to f6, giving check. The bishop on b5 is now also attacking the king. This is a very powerful...",
+                    options: ["Discovered Attack", "Double Check", "Fork", "Pin"],
+                    correct: 1,
+                    explanation: "Double Check occurs when two pieces give check simultaneously, which is very powerful because the king must move to escape.",
+                    section: "Section B: Chess Situations",
+                    type: "text"
+                }
+            ],
+            sectionC: [
+                {
+                    question: "Statement A: In a pin, the pinned piece is often stuck because moving it would expose a more valuable piece behind it.<br>Statement B: In a skewer, the less valuable piece is attacked first.",
+                    options: ["A is TRUE", "B is TRUE", "Both are TRUE", "Both are FALSE"],
+                    correct: 0,
+                    explanation: "In a pin, the piece in front is stuck shielding a more valuable piece. In a skewer, the *more* valuable piece is attacked first.",
+                    section: "Section C: True or False?",
+                    type: "text"
+                },
+                {
+                    question: "Statement A: Queenside castling is also called 'short castling'.<br>Statement B: Kingside castling is also called 'short castling' and is notated as O-O.",
+                    options: ["A is TRUE", "B is TRUE", "Both are TRUE", "Both are FALSE"],
+                    correct: 1,
+                    explanation: "Kingside (short) castling is O-O. Queenside (long) castling is O-O-O.",
+                    section: "Section C: True or False?",
+                    type: "text"
+                },
+                {
+                    question: "Statement A: A backward pawn is a strong pawn leading an attack.<br>Statement B: A backward pawn is a weak pawn that has lagged behind and is hard to defend.",
+                    options: ["A is TRUE", "B is TRUE", "Both are TRUE", "Both are FALSE"],
+                    correct: 1,
+                    explanation: "A backward pawn is weak and vulnerable because it has fallen behind pawn neighbors and is difficult to defend.",
+                    section: "Section C: True or False?",
+                    type: "text"
+                },
+                {
+                    question: "Statement A: The middlegame is mostly about getting your king to safety.<br>Statement B: The middlegame is where most attacks, combinations, and big plans happen.",
+                    options: ["A is TRUE", "B is TRUE", "Both are TRUE", "Both are FALSE"],
+                    correct: 1,
+                    explanation: "The middlegame is the complex phase of attacks, combinations, and strategic plans. King safety is crucial in the opening.",
+                    section: "Section C: True or False?",
+                    type: "text"
+                },
+                {
+                    question: "Statement A: King safety is so important that an unsafe king can ruin a material advantage.<br>Statement B: King safety is only important in the opening phase of the game.",
+                    options: ["A is TRUE", "B is TRUE", "Both are TRUE", "Both are FALSE"],
+                    correct: 0,
+                    explanation: "King safety is vital throughout the entire game. No amount of material advantage matters if your king is about to be checkmated.",
+                    section: "Section C: True or False?",
+                    type: "text"
+                }
+            ]
+        };
+
+        // State variables
+        let currentQuestionIndex = 0;
+        let selectedAnswer = null;
+        let userAnswers = [];
+        let currentSection = 'sectionA';
+        let sectionCounts = { sectionA: 15, sectionB: 15, sectionC: 5 };
+        
+        // DOM elements
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const questionScreen = document.getElementById('question-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const startBtn = document.getElementById('start-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const exportBtn = document.getElementById('export-btn');
+        
+        // Initialize the quiz
+        function initQuiz() {
+            lucide.createIcons();
+            
+            // Set up event listeners
+            startBtn.addEventListener('click', startQuiz);
+            prevBtn.addEventListener('click', showPreviousQuestion);
+            nextBtn.addEventListener('click', showNextQuestion);
+            submitBtn.addEventListener('click', submitAnswer);
+            restartBtn.addEventListener('click', restartQuiz);
+            exportBtn.addEventListener('click', exportToPDF);
+        }
+        
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            welcomeScreen.classList.add('hidden');
+            questionScreen.classList.remove('hidden');
+            renderQuestion();
+        }
+        
+        function renderQuestion() {
+            // Update progress
+            const totalQuestions = sectionCounts.sectionA + sectionCounts.sectionB + sectionCounts.sectionC;
+            const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('question-counter').textContent = `${currentQuestionIndex + 1}/${totalQuestions}`;
+            
+            // Determine which section we're in
+            if (currentQuestionIndex < sectionCounts.sectionA) {
+                currentSection = 'sectionA';
+            } else if (currentQuestionIndex < sectionCounts.sectionA + sectionCounts.sectionB) {
+                currentSection = 'sectionB';
+            } else {
+                currentSection = 'sectionC';
+            }
+            
+            // Get current question data
+            let currentQuestion;
+            let questionData;
+            
+            if (currentSection === 'sectionA') {
+                currentQuestion = quizData.sectionA[currentQuestionIndex];
+                questionData = quizData.sectionA;
+            } else if (currentSection === 'sectionB') {
+                currentQuestion = quizData.sectionB[currentQuestionIndex - sectionCounts.sectionA];
+                questionData = quizData.sectionB;
+            } else {
+                currentQuestion = quizData.sectionC[currentQuestionIndex - sectionCounts.sectionA - sectionCounts.sectionB];
+                questionData = quizData.sectionC;
+            }
+            
+            // Update UI elements
+            document.getElementById('section-badge').textContent = currentQuestion.section;
+            
+            // Update question number display
+            const questionNumber = document.querySelector('.question-number');
+            const questionIndex = currentSection === 'sectionA' ? currentQuestionIndex : 
+                                  currentSection === 'sectionB' ? currentQuestionIndex - sectionCounts.sectionA : 
+                                  currentQuestionIndex - sectionCounts.sectionA - sectionCounts.sectionB;
+            questionNumber.textContent = questionIndex + 1;
+            
+            // Set question text
+            document.getElementById('question-text').innerHTML = currentQuestion.question;
+            
+            // Clear previous options and feedback
+            document.getElementById('options-container').innerHTML = '';
+            document.getElementById('feedback-container').classList.add('hidden');
+            
+            // Show/hide buttons based on position
+            if (currentQuestionIndex === 0) {
+                prevBtn.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+            }
+            
+            if (currentQuestionIndex === (sectionCounts.sectionA + sectionCounts.sectionB + sectionCounts.sectionC - 1)) {
+                nextBtn.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
+                submitBtn.textContent = 'Finish Quiz';
+            } else {
+                submitBtn.classList.add('hidden');
+                nextBtn.classList.remove('hidden');
+                nextBtn.textContent = 'Next Question <i class="fa-solid fa-arrow-right ml-2"></i>';
+            }
+            
+            // Render options
+            currentQuestion.options.forEach((option, index) => {
+                const optionButton = document.createElement('div');
+                optionButton.className = `option-btn flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${selectedAnswer === index ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'}`;
+                
+                optionButton.innerHTML = `
+                    <div class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-700 font-bold mr-4 ${selectedAnswer === index ? 'bg-blue-500 text-white' : ''}">
+                        ${String.fromCharCode(65 + index)}
+                    </div>
+                    <span class="text-gray-700 font-medium">${option}</span>
+                `;
+                
+                optionButton.addEventListener('click', () => selectAnswer(index, optionButton));
+                document.getElementById('options-container').appendChild(optionButton);
+            });
+            
+            // Add chess diagram for specific questions
+            const diagramContainer = document.getElementById('diagram-container');
+            diagramContainer.innerHTML = '';
+            
+            // Add diagrams for specific questions
+            if (currentSection === 'sectionB' && [10, 14, 13, 26, 30].includes(currentQuestionIndex - sectionCounts.sectionA + 1)) {
+                const diagram = createChessDiagram(currentQuestionIndex - sectionCounts.sectionA + 1);
+                diagramContainer.appendChild(diagram);
+            }
+        }
+        
+        function selectAnswer(answerIndex, element) {
+            // Remove selected class from all options
+            const options = document.getElementById('options-container').children;
+            for (let i = 0; i < options.length; i++) {
+                options[i].classList.remove('border-blue-500', 'bg-blue-50');
+                const radio = options[i].querySelector('.w-8.h-8');
+                if (radio) {
+                    radio.classList.remove('bg-blue-500', 'text-white');
+                    radio.classList.add('bg-gray-200', 'text-gray-700');
+                }
+            }
+            
+            // Add selected class to clicked option
+            element.classList.add('border-blue-500', 'bg-blue-50');
+            const radio = element.querySelector('.w-8.h-8');
+            if (radio) {
+                radio.classList.remove('bg-gray-200', 'text-gray-700');
+                radio.classList.add('bg-blue-500', 'text-white');
+            }
+            
+            selectedAnswer = answerIndex;
+            
+            // Show submit button when answer is selected
+            if (currentQuestionIndex < (sectionCounts.sectionA + sectionCounts.sectionB + sectionCounts.sectionC - 1)) {
+                submitBtn.classList.remove('hidden');
+                submitBtn.textContent = 'Submit Answer <i class="fa-solid fa-check ml-2"></i>';
+                nextBtn.classList.add('hidden');
+            }
+        }
+        
+        function submitAnswer() {
+            if (selectedAnswer === null) {
+                alert('Please select an answer first!');
+                return;
+            }
+            
+            // Get current question data
+            let currentQuestion;
+            
+            if (currentSection === 'sectionA') {
+                currentQuestion = quizData.sectionA[currentQuestionIndex];
+            } else if (currentSection === 'sectionB') {
+                currentQuestion = quizData.sectionB[currentQuestionIndex - sectionCounts.sectionA];
+            } else {
+                currentQuestion = quizData.sectionC[currentQuestionIndex - sectionCounts.sectionA - sectionCounts.sectionB];
+            }
+            
+            // Store answer
+            userAnswers.push({
+                questionIndex: currentQuestionIndex,
+                answer: selectedAnswer,
+                correct: currentQuestion.correct
+            });
+            
+            // Show feedback
+            const feedbackContainer = document.getElementById('feedback-container');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackText = document.getElementById('feedback-text');
+            const explanationText = document.getElementById('explanation-text');
+            
+            feedbackContainer.classList.remove('hidden');
+            
+            if (selectedAnswer === currentQuestion.correct) {
+                feedbackContainer.className = 'mt-6 p-4 rounded-lg bg-green-50 border border-green-200';
+                feedbackIcon.className = 'fa-solid fa-check w-6 h-6 text-green-600 mr-3';
+                feedbackText.textContent = 'Correct!';
+                feedbackText.className = 'font-semibold text-green-700';
+            } else {
+                feedbackContainer.className = 'mt-6 p-4 rounded-lg bg-red-50 border border-red-200';
+                feedbackIcon.className = 'fa-solid fa-xmark w-6 h-6 text-red-600 mr-3';
+                feedbackText.textContent = 'Incorrect';
+                feedbackText.className = 'font-semibold text-red-700';
+            }
+            
+            explanationText.textContent = currentQuestion.explanation;
+            
+            // Hide submit button, show next button
+            submitBtn.classList.add('hidden');
+            nextBtn.classList.remove('hidden');
+            nextBtn.textContent = 'Next Question <i class="fa-solid fa-arrow-right ml-2"></i>';
+        }
+        
+        function showPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+        
+        function showNextQuestion() {
+            if (currentQuestionIndex < (sectionCounts.sectionA + sectionCounts.sectionB + sectionCounts.sectionC - 1)) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        function showResults() {
+            questionScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+            
+            // Calculate scores
+            let totalScore = 0;
+            let sectionScores = { sectionA: 0, sectionB: 0, sectionC: 0 };
+            
+            userAnswers.forEach(answer => {
+                if (answer.answer === answer.correct) {
+                    totalScore++;
+                    
+                    if (answer.questionIndex < sectionCounts.sectionA) {
+                        sectionScores.sectionA++;
+                    } else if (answer.questionIndex < sectionCounts.sectionA + sectionCounts.sectionB) {
+                        sectionScores.sectionB++;
+                    } else {
+                        sectionScores.sectionC++;
+                    }
+                }
+            });
+            
+            // Update results UI
+            document.getElementById('score').textContent = totalScore;
+            document.getElementById('total-questions').textContent = sectionCounts.sectionA + sectionCounts.sectionB + sectionCounts.sectionC;
+            document.getElementById('score-section-a').textContent = sectionScores.sectionA;
+            document.getElementById('total-section-a').textContent = sectionCounts.sectionA;
+            document.getElementById('score-section-b').textContent = sectionScores.sectionB;
+            document.getElementById('total-section-b').textContent = sectionCounts.sectionB;
+            document.getElementById('score-section-c').textContent = sectionScores.sectionC;
+            document.getElementById('total-section-c').textContent = sectionCounts.sectionC;
+            
+            // Calculate rating
+            const percentage = (totalScore / (sectionCounts.sectionA + sectionCounts.sectionB + sectionCounts.sectionC)) * 100;
+            let rating = '';
+            
+            if (percentage >= 90) {
+                rating = 'Chess Grandmaster 🏆';
+            } else if (percentage >= 80) {
+                rating = 'Chess Expert 🎖️';
+            } else if (percentage >= 70) {
+                rating = 'Chess Advancer ⭐';
+            } else if (percentage >= 60) {
+                rating = 'Chess Learner 📚';
+            } else {
+                rating = 'Chess Beginner 🎓';
+            }
+            
+            document.getElementById('rating').textContent = rating;
+            
+            // Add animation
+            setTimeout(() => {
+                resultsScreen.classList.add('animate-bounce');
+                setTimeout(() => {
+                    resultsScreen.classList.remove('animate-bounce');
+                }, 500);
+            }, 100);
+        }
+        
+        function restartQuiz() {
+            resultsScreen.classList.add('hidden');
+            welcomeScreen.classList.remove('hidden');
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            selectedAnswer = null;
+        }
+        
+        function createChessDiagram(questionNumber) {
+            const diagram = document.createElement('div');
+            diagram.className = 'chessboard rounded-lg overflow-hidden border-2 border-gray-300';
+            
+            // Create board array (8x8)
+            const board = Array(8).fill(null).map(() => Array(8).fill(''));
+            
+            // Set up board state based on question
+            if (questionNumber === 14) { // Fork example
+                // Black knight on f3 attacking queen on h2 and rook on d2
+                board[7][6] = '♔'; // White king
+                board[6][1] = '♛'; // Black queen
+                board[4][3] = '♜'; // Black rook
+                board[4][5] = '♞'; // Black knight (f3)
+            } else if (questionNumber === 26) { // Skewer example
+                // Bishop attacking queen, then rook behind
+                board[4][3] = '♝'; // White bishop
+                board[4][5] = '♛'; // Black queen
+                board[4][7] = '♜'; // Black rook
+            } else if (questionNumber === 30) { // Double check example
+                // King on e8, bishop on b5, knight on d7 moves to f6
+                board[7][4] = '♚'; // Black king
+                board[5][1] = '♝'; // White bishop
+                board[6][3] = '♞'; // Black knight
+                board[5][5] = '♞'; // White knight on f6 (giving check)
+            } else {
+                // Generic board
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        if (row === 1) board[row][col] = '♟'; // Black pawns
+                        else if (row === 6) board[row][col] = '♙'; // White pawns
+                        else if (row === 0) {
+                            if (col === 0 || col === 7) board[row][col] = '♜'; // Rooks
+                            else if (col === 1 || col === 6) board[row][col] = '♞'; // Knights
+                            else if (col === 2 || col === 5) board[row][col] = '♝'; // Bishops
+                            else if (col === 3) board[row][col] = '♛'; // Queen
+                            else if (col === 4) board[row][col] = '♚'; // King
+                        } else if (row === 7) {
+                            if (col === 0 || col === 7) board[row][col] = '♖'; // White rooks
+                            else if (col === 1 || col === 6) board[row][col] = '♘'; // White knights
+                            else if (col === 2 || col === 5) board[row][col] = '♗'; // White bishops
+                            else if (col === 3) board[row][col] = '♕'; // White queen
+                            else if (col === 4) board[row][col] = '♔'; // White king
+                        }
+                    }
+                }
+            }
+            
+            // Create HTML for chessboard
+            let boardHTML = '<div class="board-container">';
+            
+            for (let row = 0; row < 8; row++) {
+                boardHTML += '<div class="board-row">';
+                for (let col = 0; col < 8; col++) {
+                    const isWhite = (row + col) % 2 === 0;
+                    const piece = board[row][col] || '';
+                    const squareColor = isWhite ? 'bg-[#e0c3fc]' : 'bg-[#93c5fd]';
+                    const squareClass = isWhite ? 'bg-[#f1f5f9]' : 'bg-[#cbd5e1]';
+                    
+                    boardHTML += `<div class="board-cell ${squareClass} border border-gray-300">${piece}</div>`;
+                }
+                boardHTML += '</div>';
+            }
+            
+            boardHTML += '</div>';
+            diagram.innerHTML = boardHTML;
+            
+            return diagram;
+        }
+        
+        function exportToPDF() {
+            // This would typically use a PDF library like jsPDF
+            // For now, we'll simulate the export by showing a message
+            alert('PDF export would include:\n1. All 35 questions from the quiz\n2. Section breakdowns\n3. Answer key with explanations\n4. Chess board diagrams\n\nIn a real implementation, this would generate a printable PDF file.');
+        }
+        
+        // Initialize the quiz when the page loads
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
